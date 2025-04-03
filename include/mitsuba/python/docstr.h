@@ -803,6 +803,8 @@ Returns:
 
 static const char *__doc_mitsuba_BSDF_temporal_delay = 
 R"doc(Get the time delay of the BSDF in a specific intersection)doc";
+static const char *__doc_mitsuba_BSDF_sample_bsdf = 
+R"doc(Sample a bsdf withing the bsdf)doc";
 
 static const char *__doc_mitsuba_BSDF_eval_attribute_1 =
 R"doc(Monochromatic evaluation of a BSDF attribute at the given surface

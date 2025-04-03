@@ -88,6 +88,10 @@ public:
         NB_OVERRIDE(temporal_delay, si, random_sample, sample_data, active);
     }
 
+    PyBSDF sample_bsdf() const override {
+        NB_OVERRIDE(sample_bsdf);
+    }
+
     Float eval_attribute_1(const std::string &name, const SurfaceInteraction3f &si, Mask active) const override {
         NB_OVERRIDE(eval_attribute_1, name, si, active);
     }
@@ -170,6 +174,11 @@ template <typename Ptr, typename Cls> void bind_bsdf_generic(Cls &cls) {
                 return bsdf->temporal_delay(si, random_sample, sample_data, active);
                },
             "si"_a, "random_sample"_a, "sample_data"_a, "active"_a, D(BSDF, temporal_delay))
+        .def("sample_bsdf",
+            [](Ptr bsdf) {
+                return bsdf->sample_bsdf();
+            },
+            D(BSDF, sample_bsdf))
        .def("eval_attribute_1",
             [](Ptr bsdf, const std::string &name,
                const SurfaceInteraction3f &si, const Mask &active) {

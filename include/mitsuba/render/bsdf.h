@@ -509,6 +509,9 @@ public:
                                  const Point2f& random_sample,
                                  const BSDFSample3f& sample_data,
                                  Mask active = true) const;
+
+    virtual BSDF<Float, Spectrum> sample_bsdf() const;
+
     /**
      * \brief Monochromatic evaluation of a BSDF attribute at the given surface interaction
      *
@@ -671,6 +674,7 @@ MI_CALL_TEMPLATE_BEGIN(BSDF)
     DRJIT_CALL_METHOD(has_attribute)
     DRJIT_CALL_METHOD(eval_attribute)
     DRJIT_CALL_METHOD(temporal_delay)
+    DRJIT_CALL_METHOD(sample_bsdf)
     DRJIT_CALL_METHOD(eval_attribute_1)
     DRJIT_CALL_METHOD(eval_attribute_3)
     DRJIT_CALL_GETTER(flags)
