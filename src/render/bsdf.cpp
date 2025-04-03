@@ -105,6 +105,14 @@ BSDF<Float, Spectrum>::eval_attribute(const std::string &name,
 }
 
 MI_VARIANT Float
+BSDF<Float, Spectrum>::temporal_delay(const SurfaceInteraction3f& /*si*/,
+                                      const Point2f& /*random_sample*/,
+                                      const BSDFSample3f& /*sample_data*/,
+                                      Mask /*active*/) const {
+    return Float(0.0);
+}
+
+MI_VARIANT Float
 BSDF<Float, Spectrum>::eval_attribute_1(const std::string& name,
                                         const SurfaceInteraction3f & si,
                                         Mask active) const {

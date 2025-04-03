@@ -206,6 +206,8 @@ template <typename Float, typename Spectrum> struct BSDFSample3 {
     /// Stores the component index that was sampled by \ref BSDF::sample()
     UInt32 sampled_component;
 
+    UInt32 sampled_bsdf;
+
     //! @}
     // =============================================================
 
@@ -228,13 +230,13 @@ template <typename Float, typename Spectrum> struct BSDFSample3 {
      */
     BSDFSample3(const Vector3f &wo)
         : wo(wo), pdf(0.f), eta(1.f), sampled_type(0),
-          sampled_component(uint32_t(-1)) { }
+          sampled_component(uint32_t(-1)), sampled_bsdf(0) { }
 
 
     //! @}
     // =============================================================
 
-    DRJIT_STRUCT(BSDFSample3, wo, pdf, eta, sampled_type, sampled_component);
+    DRJIT_STRUCT(BSDFSample3, wo, pdf, eta, sampled_type, sampled_component, sampled_bsdf);
 };
 
 
@@ -503,6 +505,10 @@ public:
                                                const SurfaceInteraction3f &si,
                                                Mask active = true) const;
 
+    virtual Float temporal_delay(const SurfaceInteraction3f& si,
+                                 const Point2f& random_sample,
+                                 const BSDFSample3f& sample_data,
+                                 Mask active = true) const;
     /**
      * \brief Monochromatic evaluation of a BSDF attribute at the given surface interaction
      *
@@ -664,6 +670,7 @@ MI_CALL_TEMPLATE_BEGIN(BSDF)
     DRJIT_CALL_METHOD(eval_diffuse_reflectance)
     DRJIT_CALL_METHOD(has_attribute)
     DRJIT_CALL_METHOD(eval_attribute)
+    DRJIT_CALL_METHOD(temporal_delay)
     DRJIT_CALL_METHOD(eval_attribute_1)
     DRJIT_CALL_METHOD(eval_attribute_3)
     DRJIT_CALL_GETTER(flags)

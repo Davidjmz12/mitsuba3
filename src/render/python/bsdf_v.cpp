@@ -24,6 +24,7 @@ MI_PY_EXPORT(BSDFSample) {
         .def_rw("eta", &BSDFSample3f::eta, D(BSDFSample3, eta))
         .def_rw("sampled_type", &BSDFSample3f::sampled_type, D(BSDFSample3, sampled_type))
         .def_rw("sampled_component", &BSDFSample3f::sampled_component, D(BSDFSample3, sampled_component))
+        .def_rw("sampled_bsdf", &BSDFSample3f::sampled_bsdf, D(BSDFSample3, sampled_bsdf))
         .def_repr(BSDFSample3f);
 
     MI_PY_DRJIT_STRUCT(bs, BSDFSample3f, wo, pdf, eta, sampled_type, sampled_component);
@@ -81,6 +82,10 @@ public:
 
     UnpolarizedSpectrum eval_attribute(const std::string &name, const SurfaceInteraction3f &si, Mask active) const override {
         NB_OVERRIDE(eval_attribute, name, si, active);
+    }
+
+    Float temporal_delay(const SurfaceInteraction3f& si, const Point2f& random_sample, const BSDFSample3f& sample_data, Mask active) const override {
+        NB_OVERRIDE(temporal_delay, si, random_sample, sample_data, active);
     }
 
     Float eval_attribute_1(const std::string &name, const SurfaceInteraction3f &si, Mask active) const override {
@@ -157,6 +162,14 @@ template <typename Ptr, typename Cls> void bind_bsdf_generic(Cls &cls) {
                 return bsdf->eval_attribute(name, si, active);
             },
             "name"_a, "si"_a, "active"_a = true, D(BSDF, eval_attribute))
+       .def("temporal_delay",
+            [](Ptr bsdf, const SurfaceInteraction3f& si, 
+               const Point2f& random_sample, 
+               const BSDFSample3f& sample_data,
+                const Mask &active) {
+                return bsdf->temporal_delay(si, random_sample, sample_data, active);
+               },
+            "si"_a, "random_sample"_a, "sample_data"_a, "active"_a, D(BSDF, temporal_delay))
        .def("eval_attribute_1",
             [](Ptr bsdf, const std::string &name,
                const SurfaceInteraction3f &si, const Mask &active) {
