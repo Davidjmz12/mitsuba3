@@ -206,7 +206,6 @@ template <typename Float, typename Spectrum> struct BSDFSample3 {
     /// Stores the component index that was sampled by \ref BSDF::sample()
     UInt32 sampled_component;
 
-    UInt32 sampled_bsdf;
 
     //! @}
     // =============================================================
@@ -230,13 +229,13 @@ template <typename Float, typename Spectrum> struct BSDFSample3 {
      */
     BSDFSample3(const Vector3f &wo)
         : wo(wo), pdf(0.f), eta(1.f), sampled_type(0),
-          sampled_component(uint32_t(-1)), sampled_bsdf(0) { }
+          sampled_component(uint32_t(-1)) { }
 
 
     //! @}
     // =============================================================
 
-    DRJIT_STRUCT(BSDFSample3, wo, pdf, eta, sampled_type, sampled_component, sampled_bsdf);
+    DRJIT_STRUCT(BSDFSample3, wo, pdf, eta, sampled_type, sampled_component);
 };
 
 
@@ -322,6 +321,13 @@ public:
            Float sample1,
            const Point2f &sample2,
            Mask active = true) const = 0;
+    
+    virtual std::tuple<BSDFSample3f, Spectrum, Float>
+    sample_t(const BSDFContext &ctx,
+           const SurfaceInteraction3f &si,
+           Float sample1,
+           const Point2f &sample2,
+           Mask active = true) const;
 
     /**
      * \brief Evaluate the BSDF f(wi, wo) or its adjoint version f^{*}(wi, wo)
@@ -353,6 +359,12 @@ public:
                           const Vector3f &wo,
                           Mask active = true) const = 0;
 
+    virtual Spectrum eval_t(const BSDFContext &ctx,
+                          const SurfaceInteraction3f &si,
+                          const Vector3f &wo,
+                          const Float t,
+                          Mask active = true) const;
+
     /**
      * \brief Compute the probability per unit solid angle of sampling a
      * given direction
@@ -383,6 +395,12 @@ public:
                       const SurfaceInteraction3f &si,
                       const Vector3f &wo,
                       Mask active = true) const = 0;
+
+    virtual Float pdf_t(const BSDFContext &ctx,
+                      const SurfaceInteraction3f &si,
+                      const Vector3f &wo,
+                      const Float t,
+                      Mask active = true) const;
 
     /**
      * \brief Jointly evaluate the BSDF f(wi, wo) and the probability per unit
@@ -420,6 +438,12 @@ public:
     virtual std::pair<Spectrum, Float> eval_pdf(const BSDFContext &ctx,
                                                 const SurfaceInteraction3f &si,
                                                 const Vector3f &wo,
+                                                Mask active = true) const;
+
+    virtual std::pair<Spectrum, Float> eval_pdf_t(const BSDFContext &ctx,
+                                                const SurfaceInteraction3f &si,
+                                                const Vector3f &wo,
+                                                const Float t,
                                                 Mask active = true) const;
 
     /**
@@ -461,6 +485,13 @@ public:
                     const Point2f &sample2,
                     Mask active = true) const;
 
+    virtual std::tuple<Spectrum, Float, BSDFSample3f, Spectrum, Float>
+    eval_pdf_sample_t(const BSDFContext &ctx,
+                    const SurfaceInteraction3f &si,
+                    const Vector3f &wo,
+                    Float sample1,
+                    const Point2f &sample2,
+                    Mask active = true) const;
 
     /**
      * \brief Evaluate un-scattered transmission component of the BSDF
@@ -510,7 +541,6 @@ public:
                                  const BSDFSample3f& sample_data,
                                  Mask active = true) const;
 
-    virtual BSDF<Float, Spectrum> sample_bsdf() const;
 
     /**
      * \brief Monochromatic evaluation of a BSDF attribute at the given surface interaction
@@ -665,16 +695,20 @@ NAMESPACE_END(mitsuba)
 
 MI_CALL_TEMPLATE_BEGIN(BSDF)
     DRJIT_CALL_METHOD(sample)
+    DRJIT_CALL_METHOD(sample_t)
     DRJIT_CALL_METHOD(eval)
+    DRJIT_CALL_METHOD(eval_t)
     DRJIT_CALL_METHOD(eval_null_transmission)
     DRJIT_CALL_METHOD(pdf)
+    DRJIT_CALL_METHOD(pdf_t)
     DRJIT_CALL_METHOD(eval_pdf)
+    DRJIT_CALL_METHOD(eval_pdf_t)
     DRJIT_CALL_METHOD(eval_pdf_sample)
+    DRJIT_CALL_METHOD(eval_pdf_sample_t)
     DRJIT_CALL_METHOD(eval_diffuse_reflectance)
     DRJIT_CALL_METHOD(has_attribute)
     DRJIT_CALL_METHOD(eval_attribute)
     DRJIT_CALL_METHOD(temporal_delay)
-    DRJIT_CALL_METHOD(sample_bsdf)
     DRJIT_CALL_METHOD(eval_attribute_1)
     DRJIT_CALL_METHOD(eval_attribute_3)
     DRJIT_CALL_GETTER(flags)

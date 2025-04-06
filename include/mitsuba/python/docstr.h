@@ -748,8 +748,6 @@ static const char *__doc_mitsuba_BSDFSample3_pdf = R"doc(Probability density at 
 
 static const char *__doc_mitsuba_BSDFSample3_sampled_component = R"doc(Stores the component index that was sampled by BSDF::sample())doc";
 
-static const char *__doc_mitsuba_BSDFSample3_sampled_bsdf = R"doc(Stores the bsdf index that was sampled by BSDF::sample())doc";
-
 static const char *__doc_mitsuba_BSDFSample3_sampled_type = R"doc(Stores the component type that was sampled by BSDF::sample())doc";
 
 static const char *__doc_mitsuba_BSDFSample3_wo = R"doc(Normalized outgoing direction in local coordinates)doc";
@@ -803,8 +801,22 @@ Returns:
 
 static const char *__doc_mitsuba_BSDF_temporal_delay = 
 R"doc(Get the time delay of the BSDF in a specific intersection)doc";
-static const char *__doc_mitsuba_BSDF_sample_bsdf = 
-R"doc(Sample a bsdf withing the bsdf)doc";
+
+static const char *__doc_mitsuba_BSDF_pdf_t = 
+R"doc(...)doc";
+
+static const char *__doc_mitsuba_BSDF_sample_t = 
+R"doc(...)doc";
+
+static const char *__doc_mitsuba_BSDF_eval_t = 
+R"doc(...)doc";
+
+static const char *__doc_mitsuba_BSDF_eval_pdf_t = 
+R"doc(...)doc";
+
+static const char *__doc_mitsuba_BSDF_eval_pdf_sample_t = 
+R"doc(...)doc";
+
 
 static const char *__doc_mitsuba_BSDF_eval_attribute_1 =
 R"doc(Monochromatic evaluation of a BSDF attribute at the given surface
