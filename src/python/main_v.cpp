@@ -2,6 +2,7 @@
 #include <mitsuba/core/spectrum.h>
 
 #include <mitsuba/render/bsdf.h>
+#include <mitsuba/render/temporal_profile.h>
 #include <mitsuba/render/emitter.h>
 #include <mitsuba/render/film.h>
 #include <mitsuba/render/integrator.h>
@@ -40,6 +41,7 @@ static nb::object caster(Object *o) {
     PY_TRY_CAST(Endpoint);
 
     PY_TRY_CAST(BSDF);
+    PY_TRY_CAST(TemporalProfile);
     PY_TRY_CAST(Film);
 
     PY_TRY_CAST(MonteCarloIntegrator);
@@ -85,6 +87,7 @@ MI_PY_DECLARE(quad);
 // render
 MI_PY_DECLARE(BSDFSample);
 MI_PY_DECLARE(BSDF);
+MI_PY_DECLARE(TemporalProfile);
 MI_PY_DECLARE(Emitter);
 MI_PY_DECLARE(Endpoint);
 MI_PY_DECLARE(Film);
@@ -196,6 +199,7 @@ NB_MODULE(MI_VARIANT_NAME, m) {
     MI_PY_IMPORT(DirectionSample);
     MI_PY_IMPORT(BSDFSample);
     MI_PY_IMPORT(BSDF);
+    MI_PY_IMPORT(TemporalProfile);
     MI_PY_IMPORT(Film);
     MI_PY_IMPORT(fresnel);
     MI_PY_IMPORT(ImageBlock);

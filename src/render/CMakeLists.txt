@@ -51,6 +51,7 @@ add_library(mitsuba-render OBJECT
   ${INC_DIR}/records.h
 
   bsdf.cpp         ${INC_DIR}/bsdf.h
+  temporal_profile.cpp ${INC_DIR}/temporal_profile.h
   emitter.cpp      ${INC_DIR}/emitter.h
   endpoint.cpp     ${INC_DIR}/endpoint.h
   film.cpp         ${INC_DIR}/film.h
