@@ -578,6 +578,12 @@ static const char *__doc_mitsuba_AtomicFloat_operator_imul = R"doc(Atomically mu
 
 static const char *__doc_mitsuba_AtomicFloat_operator_isub = R"doc(Atomically subtract a floating point value)doc";
 
+static const char *__doc_mitsuba_TemporalProfile =
+R"doc(Temporal profile interface)doc";
+
+static const char *__doc_mitsuba_TemporalProfile_to_string = 
+R"doc(Convert the temporal profile to a string)doc";
+
 static const char *__doc_mitsuba_BSDF =
 R"doc(Bidirectional Scattering Distribution Function (BSDF) interface
 

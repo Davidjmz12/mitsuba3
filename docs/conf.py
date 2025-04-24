@@ -77,6 +77,7 @@ rst_prolog = r"""
 .. |true| replace:: :monosp:`true`
 .. |string| replace:: :paramtype:`string`
 .. |bsdf| replace:: :paramtype:`bsdf`
+.. |temporalprofile| replace:: :paramtype:`temporalprofile`
 .. |phase| replace:: :paramtype:`phase`
 .. |point| replace:: :paramtype:`point`
 .. |vector| replace:: :paramtype:`vector`
