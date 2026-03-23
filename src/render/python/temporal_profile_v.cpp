@@ -41,12 +41,12 @@ template <typename Ptr, typename Cls> void bind_temporal_delay_generic(Cls &cls)
             [](Ptr temporal_profile, const SurfaceInteraction3f &si,
                const Point2f &sample1, Mask active) {
                 return temporal_profile->sample_delay(si, sample1, active);
-            }, "si"_a, "sample1"_a, "active"_a = true)
+            }, "si"_a, "sample1"_a, "active"_a = true, D(TemporalProfile, sample_delay))
         .def("eval_delay",
             [](Ptr temporal_profile, const SurfaceInteraction3f &si,
                const Float delay, Mask active) {
                 return temporal_profile->eval_delay(si, delay, active);
-            }, "si"_a, "delay"_a, "active"_a = true);
+            }, "si"_a, "delay"_a, "active"_a = true, D(TemporalProfile, eval_delay));
 }
 
 MI_PY_EXPORT(TemporalProfile){

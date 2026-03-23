@@ -579,10 +579,46 @@ static const char *__doc_mitsuba_AtomicFloat_operator_imul = R"doc(Atomically mu
 static const char *__doc_mitsuba_AtomicFloat_operator_isub = R"doc(Atomically subtract a floating point value)doc";
 
 static const char *__doc_mitsuba_TemporalProfile =
-R"doc(Temporal profile interface)doc";
+R"doc(Temporal profile interface
+
+This class provides an abstract interface to all %TemporalProfile plugins in Mitsuba.
+It exposes functions for evaluating and sampling the model.
+
+A temporal profile describes how light is scattered in time when it interacts.
+It needs to be sampled and evaluated at each surface interaction in the
+path of a light transport simulation.)doc";
 
 static const char *__doc_mitsuba_TemporalProfile_to_string = 
-R"doc(Convert the temporal profile to a string)doc";
+R"doc(Return a human-readable string representation of the object's contents.)doc";
+
+static const char *__doc_mitsuba_TemporalProfile_sample_delay = 
+R"doc(Sample the temporal profile to obtain a time delay.
+
+The function returns a positive time delay (in optical path length units)
+sampled from the temporal profile at the given surface interaction. 
+It must be a positive value.
+
+Parameter ``si``:
+    A surface interaction data structure describing the underlying
+    surface position.
+
+Parameter ``sample1``:
+    A uniformly distributed sample on [0,1]. It is used
+    to sample the temporal profile.)doc";
+
+static const char *__doc_mitsuba_TemporalProfile_eval_delay = 
+R"doc(Evaluate the probability density function (pdf) of sampling a given time delay.
+
+The function returns the value of the probability density function (pdf)
+at the specified time delay.
+
+Parameter ``si``:
+    A surface interaction data structure describing the underlying
+    surface position.
+
+Parameter ``delay``:
+   The time delay (in optical path length units) to evaluate the pdf.
+   It must be a positive value)doc";
 
 static const char *__doc_mitsuba_BSDF =
 R"doc(Bidirectional Scattering Distribution Function (BSDF) interface
@@ -789,6 +825,28 @@ Parameter ``si``:
 Parameter ``wo``:
     The outgoing direction)doc";
 
+
+static const char *__doc_mitsuba_BSDF_eval_t = 
+R"doc(Evalute the transient BSDF f(x, wi, wo, t) and multiply by the cosine
+foreshortening term.
+
+By default it returns the value of eval() method.
+
+Parameter ``ctx``:
+    A context data structure describing which lobes to evaluate,
+    and whether radiance or importance are being transported.
+
+Parameter ``si``:
+    A surface interaction data structure describing the underlying
+    surface position. The incident direction is obtained from
+    the field ``si.wi``.
+
+Parameter ``wo``:
+    The outgoing direction
+
+Parameter ``t``:
+    The temporal delay to evaluate the BSDF)doc";
+
 static const char *__doc_mitsuba_BSDF_eval_attribute =
 R"doc(Evaluate a specific BSDF attribute at the given surface interaction.
 
@@ -808,20 +866,6 @@ Returns:
 static const char *__doc_mitsuba_BSDF_temporal_delay = 
 R"doc(Get the time delay of the BSDF in a specific intersection)doc";
 
-static const char *__doc_mitsuba_BSDF_pdf_t = 
-R"doc(...)doc";
-
-static const char *__doc_mitsuba_BSDF_sample_t = 
-R"doc(...)doc";
-
-static const char *__doc_mitsuba_BSDF_eval_t = 
-R"doc(...)doc";
-
-static const char *__doc_mitsuba_BSDF_eval_pdf_t = 
-R"doc(...)doc";
-
-static const char *__doc_mitsuba_BSDF_eval_pdf_sample_t = 
-R"doc(...)doc";
 
 
 static const char *__doc_mitsuba_BSDF_eval_attribute_1 =
@@ -916,6 +960,29 @@ Parameter ``si``:
 Parameter ``wo``:
     The outgoing direction)doc";
 
+
+static const char *__doc_mitsuba_BSDF_eval_pdf_t = 
+R"doc(Jointly evaluate the transient BSDF f(wi, wo, t) and the probability per unit solid
+angle of sampling the given direction. The result from the evaluated
+BSDF is multiplied by the cosine foreshortening term.
+
+By default it evaluates the eval_pdf() method.
+
+Parameter ``ctx``:
+    A context data structure describing which lobes to evaluate, and
+    whether radiance or importance are being transported.
+
+Parameter ``si``:
+    A surface interaction data structure describing the underlying
+    surface position. The incident direction is obtained from the
+    field ``si.wi``.
+
+Parameter ``wo``:
+    The outgoing direction
+    
+Parameter ``t``:
+    The temporal delay to evaluate the pdf)doc";
+
 static const char *__doc_mitsuba_BSDF_eval_pdf_sample =
 R"doc(Jointly evaluate the BSDF f(wi, wo), the probability per unit solid
 angle of sampling the given direction ``wo`` and importance sample the
@@ -946,6 +1013,32 @@ Parameter ``sample1``:
 Parameter ``sample2``:
     A uniformly distributed sample on :math:`[0,1]^2`. It is used to
     generate the sampled direction.)doc";
+
+static const char *__doc_mitsuba_BSDF_eval_pdf_sample_t = 
+R"doc(Jointly evaluate the transient BSDF f(wi, wo, t), the probability per unit solid
+angle of sampling the given direction ``wo`` and delay ``t`` and importance sample the
+BSDF model.
+
+Parameter ``ctx``:
+    A context data structure describing which lobes to evaluate, and
+    whether radiance or importance are being transported.
+
+Parameter ``si``:
+    A surface interaction data structure describing the underlying
+    surface position. The incident direction is obtained from the
+    field ``si.wi``.
+
+Parameter ``wo``:
+    The outgoing direction
+
+Parameter ``sample1``:
+    A uniformly distributed sample on :math:`[0,1]`. It is used to
+    select the BSDF lobe in multi-lobe models.
+
+Parameter ``sample2``:
+    A uniformly distributed sample on :math:`[0,1]^2`. It is used to
+    generate the sampled direction.)doc";
+
 
 static const char *__doc_mitsuba_BSDF_flags = R"doc(Flags for all components combined.)doc";
 
@@ -993,6 +1086,27 @@ Parameter ``si``:
 Parameter ``wo``:
     The outgoing direction)doc";
 
+static const char *__doc_mitsuba_BSDF_pdf_t = 
+R"doc(Compute the probability per unit solid angle of sampling a given
+direction in the transient domain.
+
+By default it returns the value of pdf() method.
+
+Parameter ``ctx``:
+    A context data structure describing which lobes to evaluate, and
+    whether radiance or importance are being transported.
+
+Parameter ``si``:
+    A surface interaction data structure describing the underlying
+    surface position. The incident direction is obtained from the
+    field ``si.wi``.
+
+Parameter ``wo``:
+    The outgoing direction
+    
+Parameter ``t``:
+    The temporal delay to evaluate the PDF)doc";
+
 static const char *__doc_mitsuba_BSDF_sample =
 R"doc(Importance sample the BSDF model
 
@@ -1037,6 +1151,45 @@ other information. The contents are undefined if sampling failed.
 value: The BSDF value divided by the probability (multiplied by the
 cosine foreshortening factor when a non-delta component is sampled). A
 zero spectrum indicates that sampling failed.)doc";
+
+
+static const char *__doc_mitsuba_BSDF_sample_t = 
+R"doc(Importance sample the BSDF model
+
+The function returns a sample data structure along with the importance
+weight, which is the value of the BSDF divided by the probability
+density, and multiplied by the cosine foreshortening factor.
+
+Moreover, it also returns the temporal delay associated with the sampled direction.
+
+Parameter ``ctx``:
+    A context data structure describing which lobes to sample, and
+    whether radiance or importance are being transported.
+
+Parameter ``si``:
+    A surface interaction data structure describing the underlying
+    surface position. The incident direction is obtained from the
+    field ``si.wi``.
+
+Parameter ``sample1``:
+    A uniformly distributed sample on :math:`[0,1]`. It is used to
+    select the BSDF lobe in multi-lobe models.
+
+Parameter ``sample2``:
+    A uniformly distributed sample on :math:`[0,1]^2`. It is used to
+    generate the sampled direction.
+
+Returns:
+    A tuple (bs, value, delay) consisting of
+
+bs: Sampling record, indicating the sampled direction, PDF values and
+other information. The contents are undefined if sampling failed.
+
+value: The BSDF value divided by the probability (multiplied by the
+cosine foreshortening factor when a non-delta component is sampled). A
+zero spectrum indicates that sampling failed.
+
+delay: The temporal delay introduced by the BSDF)doc";
 
 static const char *__doc_mitsuba_BSDF_set_id = R"doc(Set a string identifier)doc";
 

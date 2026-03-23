@@ -322,6 +322,47 @@ public:
            const Point2f &sample2,
            Mask active = true) const = 0;
     
+
+    /**
+     * \brief Importance sample the BSDF model
+     *
+     * The function returns a sample data structure along with the importance
+     * weight, which is the value of the BSDF divided by the probability
+     * density, and multiplied by the cosine foreshortening factor (if needed
+     * --- it is omitted for degenerate BSDFs like smooth mirrors/dielectrics).
+     *
+     * Moreover, it also returns the temporal delay associated with the sampled direction.
+     *
+     * \param ctx
+     *     A context data structure describing which lobes to sample,
+     *     and whether radiance or importance are being transported.
+     *
+     * \param si
+     *     A surface interaction data structure describing the underlying
+     *     surface position. The incident direction is obtained from
+     *     the field <tt>si.wi</tt>.
+     *
+     * \param sample1
+     *     A uniformly distributed sample on \f$[0,1]\f$. It is used
+     *     to select the BSDF lobe in multi-lobe models.
+     *
+     * \param sample2
+     *     A uniformly distributed sample on \f$[0,1]^2\f$. It is
+     *     used to generate the sampled direction.
+     *
+     * \return A tuple (bs, value, delay) consisting of
+     *
+     *     bs:    Sampling record, indicating the sampled direction, PDF values
+     *            and other information. The contents are undefined if sampling
+     *            failed.
+     *
+     *     value: The BSDF value divided by the probability (multiplied by the
+     *            cosine foreshortening factor when a non-delta component is
+     *            sampled). A zero spectrum indicates that sampling failed.
+     * 
+     *     delay: The temporal delay associated with the sampled direction.
+     * 
+     */     
     virtual std::tuple<BSDFSample3f, Spectrum, Float>
     sample_t(const BSDFContext &ctx,
            const SurfaceInteraction3f &si,
@@ -359,6 +400,28 @@ public:
                           const Vector3f &wo,
                           Mask active = true) const = 0;
 
+    /**
+     * \brief Evalute the transient BSDF f(x, wi, wo, t) and multiply by the cosine
+     * foreshortening term.
+     * 
+     * 
+     * By default it returns the value of \ref eval() method.
+     * 
+     * \param ctx
+     *     A context data structure describing which lobes to evaluate,
+     *     and whether radiance or importance are being transported.
+     *
+     * \param si
+     *     A surface interaction data structure describing the underlying
+     *     surface position. The incident direction is obtained from
+     *     the field <tt>si.wi</tt>.
+     *
+     * \param wo
+     *     The outgoing direction
+     * 
+     * \param t
+     *     The temporal delay to evaluate the BSDF.
+     */
     virtual Spectrum eval_t(const BSDFContext &ctx,
                           const SurfaceInteraction3f &si,
                           const Vector3f &wo,
@@ -396,6 +459,27 @@ public:
                       const Vector3f &wo,
                       Mask active = true) const = 0;
 
+    /**
+     * \brief Compute the probability per unit solid angle of sampling a
+     * given direction in the transient domain.
+     * 
+     * By default it returns the value of \ref pdf() method.
+     *
+     * \param ctx
+     *     A context data structure describing which lobes to evaluate,
+     *     and whether radiance or importance are being transported.
+     *
+     * \param si
+     *     A surface interaction data structure describing the underlying
+     *     surface position. The incident direction is obtained from
+     *     the field <tt>si.wi</tt>.
+     *
+     * \param wo
+     *     The outgoing direction
+     * 
+     * \param t
+     *     The temporal delay to evaluate the BSDF.
+     */
     virtual Float pdf_t(const BSDFContext &ctx,
                       const SurfaceInteraction3f &si,
                       const Vector3f &wo,
@@ -440,6 +524,28 @@ public:
                                                 const Vector3f &wo,
                                                 Mask active = true) const;
 
+    /**
+     * \brief Jointly evaluate the transient BSDF f(wi, wo, t) and the probability per unit
+     * solid angle of sampling the given direction. The result from the evaluated
+     * BSDF is multiplied by the cosine foreshortening term.
+     *
+     * By default it evaluates the \ref eval_pdf() method.
+     *
+     * \param ctx
+     *     A context data structure describing which lobes to evaluate,
+     *     and whether radiance or importance are being transported.
+     *
+     * \param si
+     *     A surface interaction data structure describing the underlying
+     *     surface position. The incident direction is obtained from
+     *     the field <tt>si.wi</tt>.
+     *
+     * \param wo
+     *     The outgoing direction
+     * 
+     * \param t
+     *     The temporal delay to evaluate the BSDF.
+     */
     virtual std::pair<Spectrum, Float> eval_pdf_t(const BSDFContext &ctx,
                                                 const SurfaceInteraction3f &si,
                                                 const Vector3f &wo,
@@ -485,6 +591,32 @@ public:
                     const Point2f &sample2,
                     Mask active = true) const;
 
+    /**
+     * \brief Jointly evaluate the transient BSDF f(wi, wo, t), the probability per unit
+     * solid angle of sampling the given direction \c wo and delay \c t and importance sample
+     * the BSDF model.
+     *
+     *
+     * \param ctx
+     *     A context data structure describing which lobes to evaluate,
+     *     and whether radiance or importance are being transported.
+     *
+     * \param si
+     *     A surface interaction data structure describing the underlying
+     *     surface position. The incident direction is obtained from
+     *     the field <tt>si.wi</tt>.
+     *
+     * \param wo
+     *     The outgoing direction
+     *
+     * \param sample1
+     *     A uniformly distributed sample on \f$[0,1]\f$. It is used
+     *     to select the BSDF lobe in multi-lobe models.
+     *
+     * \param sample2
+     *     A uniformly distributed sample on \f$[0,1]^2\f$. It is
+     *     used to generate the sampled direction.
+     */
     virtual std::tuple<Spectrum, Float, BSDFSample3f, Spectrum, Float>
     eval_pdf_sample_t(const BSDFContext &ctx,
                     const SurfaceInteraction3f &si,
